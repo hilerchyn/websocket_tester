@@ -33,7 +33,7 @@ func (s *Simulator) Run(){
 	// start worker
 	for count := 0; count < s.Count ; count++ {
 		s.wg.Add(1)
-		go s.test(count)
+		go s.connect(count)
 	}
 
 	s.wg.Wait()

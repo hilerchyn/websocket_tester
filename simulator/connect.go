@@ -6,9 +6,15 @@ import (
 
 	"github.com/gorilla/websocket"
 	"strings"
+	"fmt"
+	"math/rand"
 )
 
-func (s *Simulator) test(workerId int){
+func init(){
+	rand.Seed(time.Now().UnixNano())
+}
+
+func (s *Simulator) connect(workerId int){
 
 	log.Printf("worker %d connecting to %s", workerId, s.Url.String())
 	c, _, err := websocket.DefaultDialer.Dial(s.Url.String(), nil)
@@ -31,14 +37,14 @@ func (s *Simulator) test(workerId int){
 	defer ticker.Stop()
 	for {
 		select {
-		case t := <-ticker.C:
-			log.Println(t.String())
+		case <-ticker.C:
+			//log.Println(t.String())
 			s.worker[workerId] <- workerId
 			return
-		case tl := <-tickerLogin.C:
+		case <-tickerLogin.C:
 			if loginFlag == false {
-				log.Println(tl.String())
-				err := c.WriteMessage(websocket.TextMessage, []byte(s.defaultConfig.StrLogin))
+				//log.Println(tl.String())
+				err := c.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf(s.defaultConfig.StrLogin, rand.Int())))
 				if err != nil {
 					log.Println("write:", err)
 					return
@@ -68,7 +74,7 @@ func (s *Simulator) sync(workerId int, conn *websocket.Conn){
 				log.Println("read:", err)
 				return
 			}
-			log.Println(time.Now().Unix())
+			log.Print(time.Now().String())
 			log.Printf("recv: %s", message)
 
 			// pong
