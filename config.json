@@ -1,7 +1,12 @@
 {
+  "ws_scheme":"ws",
   "ws_ip":"192.168.33.11",
   "ws_port": "7272",
   "ws_path": "/",
   "str_login":"{\"type\":\"login\",\"user_id\":\"1\",\"event_id\":\"1\",\"group_id\":\"1\",\"client_name\":\"1\",\"room_id\":\"1\"}",
-  "str_say":"{\"type\":\"say\",\"parameters\":{\"body\":\"維持 session ${USER_ID}\",\"title_id\":\"10\",\"user_id\":\"${USER_ID}\",\"nick_name\":\"u${USER_ID}\",\"event_id\":\"1\",\"group_id\":\"1\",\"type\":\"1\",\"icon\":\"icon.png\"},\"to_client_id\":\"1\",\"content\":\"維持 session  ${USER_ID}\"}"
+  "str_say":"{\"type\":\"say\",\"parameters\":{\"body\":\"維持 session ${USER_ID}\",\"title_id\":\"10\",\"user_id\":\"${USER_ID}\",\"nick_name\":\"u${USER_ID}\",\"event_id\":\"1\",\"group_id\":\"1\",\"type\":\"1\",\"icon\":\"icon.png\"},\"to_client_id\":\"1\",\"content\":\"維持 session  ${USER_ID}\"}",
+  "str_ping":"{\"type\":\"ping\"}",
+  "str_pong":"{\"type\":\"pong\"}",
+  "simulator_count":2,
+  "exec_second": 12
 }

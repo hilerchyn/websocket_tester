@@ -7,11 +7,16 @@ import (
 )
 
 type Config struct {
+	WSScheme string `json:"ws_scheme"`
 	WSIP     string `json:"ws_ip"`
 	WSPort   string `json:"ws_port"`
 	WSPath   string `json:"ws_path"`
 	StrLogin string `json:"str_login"`
 	StrSay   string `json:"str_say"`
+	StrPing  string `json:"str_ping"`
+	StrPong  string `json:"str_pong"`
+	SimulatorCount int `json:"simulator_count"`
+	ExecSecond int `json:"exec_second"`
 }
 
 

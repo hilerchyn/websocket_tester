@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./config"
+	"chat_tester/config"
 	"flag"
 	"log"
 	"os"
@@ -20,6 +20,5 @@ func loadConfig() (*config.Config, error){
 		os.Exit(1)
 	}
 
-	log.Println(defaultConfig)
 	return defaultConfig, nil
 }

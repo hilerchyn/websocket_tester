@@ -8,12 +8,9 @@ package main
 
 import (
 	"log"
-	"net/url"
 	"os"
-	"os/signal"
-	"time"
 
-	"github.com/gorilla/websocket"
+	"chat_tester/simulator"
 )
 
 
@@ -26,67 +23,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt)
-
-	u := url.URL{Scheme: "ws", Host: defaultConfig.WSIP + ":" + defaultConfig.WSPort, Path: defaultConfig.WSPath}
-	log.Printf("connecting to %s", u.String())
-
-	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
+	// simulator
+	simulator, err := simulator.NewSimulator(defaultConfig)
 	if err != nil {
-		log.Fatal("dial:", err)
+		log.Println("create simulator failed")
+		os.Exit(1)
 	}
-	defer c.Close()
 
-	done := make(chan struct{})
+	// start
+	simulator.Run()
 
-	go func() {
-		defer c.Close()
-		defer close(done)
-		for {
-			_, message, err := c.ReadMessage()
-			if err != nil {
-				log.Println("read:", err)
-				return
-			}
-			log.Println(time.Now().Unix())
-			log.Printf("recv: %s", message)
-		}
-	}()
-
-	ticker := time.NewTicker(time.Second)
-	defer ticker.Stop()
-
-	loginFlag := false
-
-	for {
-		select {
-		case t := <-ticker.C:
-			if loginFlag == false {
-				log.Println(t.String())
-				err := c.WriteMessage(websocket.TextMessage, []byte(defaultConfig.StrLogin))
-				if err != nil {
-					log.Println("write:", err)
-					return
-				}
-
-				loginFlag = true
-			}
-		case <-interrupt:
-			log.Println("interrupt")
-			// To cleanly close a connection, a client should send a close
-			// frame and wait for the server to close the connection.
-			err := c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-			if err != nil {
-				log.Println("write close:", err)
-				return
-			}
-				select {
-				case <-done:
-				case <-time.After(time.Second):
-				}
-			c.Close()
-			return
-		}
-	}
 }
