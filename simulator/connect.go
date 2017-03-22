@@ -4,25 +4,33 @@ import (
 	"log"
 	"time"
 
-	"github.com/gorilla/websocket"
-	"strings"
 	"fmt"
+	"github.com/gorilla/websocket"
 	"math/rand"
+	"strings"
+	"sync"
 )
 
-func init(){
+func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func (s *Simulator) connect(workerId int){
+func (s *Simulator) connect(workerId int) {
 
 	log.Printf("worker %d connecting to %s", workerId, s.Url.String())
+	//c := func() *websocket.Conn {
+	//	for {
 	c, _, err := websocket.DefaultDialer.Dial(s.Url.String(), nil)
 	if err != nil {
 		s.wg.Done()
-		log.Fatal("dial:", err)
+		log.Println("dial:", err)
+		return
 	}
-	//defer c.Close()
+
+	//		return c
+	//	}
+	//}()
+	defer c.Close()
 
 	// set chan value
 	s.worker[workerId] = make(chan int)
@@ -30,8 +38,10 @@ func (s *Simulator) connect(workerId int){
 	// read message
 	go s.sync(workerId, c)
 
+	lock := new(sync.Mutex)
+
 	loginFlag := false
-	tickerLogin := time.NewTicker(time.Second)
+	tickerLogin := time.NewTicker(time.Second + time.Duration(rand.Intn(60)+1))
 	defer tickerLogin.Stop()
 	ticker := time.NewTicker(time.Duration(s.defaultConfig.ExecSecond) * time.Second)
 	defer ticker.Stop()
@@ -43,8 +53,13 @@ func (s *Simulator) connect(workerId int){
 			return
 		case <-tickerLogin.C:
 			if loginFlag == false {
+				if c == nil {
+					continue
+				}
 				//log.Println(tl.String())
+				lock.Lock()
 				err := c.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf(s.defaultConfig.StrLogin, rand.Int())))
+				lock.Unlock()
 				if err != nil {
 					log.Println("write:", err)
 					return
@@ -59,17 +74,25 @@ func (s *Simulator) connect(workerId int){
 
 }
 
-func (s *Simulator) sync(workerId int, conn *websocket.Conn){
+func (s *Simulator) sync(workerId int, conn *websocket.Conn) {
 	defer s.wg.Done()
 	defer conn.Close()
 
+	lock := new(sync.Mutex)
+
 	for {
 		select {
-		case done := <- s.worker[workerId]:
+		case done := <-s.worker[workerId]:
 			log.Println("Worker:", done, " Done!")
 			return
 		default:
+			if conn == nil {
+				continue
+			}
+
+			lock.Lock()
 			_, message, err := conn.ReadMessage()
+			lock.Unlock()
 			if err != nil {
 				log.Println("read:", err)
 				return
@@ -79,7 +102,9 @@ func (s *Simulator) sync(workerId int, conn *websocket.Conn){
 
 			// pong
 			if strings.Compare(string(message), s.defaultConfig.StrPing) == 0 {
+				lock.Lock()
 				err := conn.WriteMessage(websocket.TextMessage, []byte(s.defaultConfig.StrPong))
+				lock.Unlock()
 				if err != nil {
 					log.Println("write:", err)
 					return
