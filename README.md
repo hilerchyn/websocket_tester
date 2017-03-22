@@ -38,16 +38,21 @@ JSON format
 }
 ```
 
-**ws_scheme** websocket protocal, **ws** or **wss**
-**ws_ip** websocket server's IP/domain name
-**ws_port** the public port
-**ws_path** websocket path
-**str_login** the login type message
-**str_say** the say type message
-**str_ping** server's ping message
-**str_pong** response for server's ping message
-**simulator_count** start how many client to connect to server
-**simulator_start_in** start all client in how many time(second)
-**exec_second** how long to run
+parameter | description
+-------|-------------
+**ws_scheme** | websocket protocal, **ws** or **wss**
+**ws_ip** | websocket server's IP/domain name
+**ws_port** | the public port
+**ws_path** | websocket path
+**str_login** | the login type message
+**str_say** | the say type message
+**str_ping** | server's ping message
+**str_pong** | response for server's ping message
+**simulator_count** | start how many client to connect to server
+**simulator_start_in** | start all client in how many time(second)
+**exec_second** | how long to run
 
 
+#TODO List
+
+- [ ] No Say Type message
