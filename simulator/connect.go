@@ -41,7 +41,7 @@ func (s *Simulator) connect(workerId int) {
 	lock := new(sync.Mutex)
 
 	loginFlag := false
-	tickerLogin := time.NewTicker(time.Second + time.Duration(rand.Intn(60)+1))
+	tickerLogin := time.NewTicker(time.Second + time.Duration(rand.Intn(s.defaultConfig.SimulatorStartIn)+1))
 	defer tickerLogin.Stop()
 	ticker := time.NewTicker(time.Duration(s.defaultConfig.ExecSecond) * time.Second)
 	defer ticker.Stop()
