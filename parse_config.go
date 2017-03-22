@@ -1,8 +1,8 @@
 package main
 
 import (
-	"chat_tester/config"
 	"flag"
+	"github.com/hilerchyn/websocket_tester/config"
 	"log"
 	"os"
 )
@@ -10,7 +10,7 @@ import (
 // flag
 var cfg = flag.String("cfg", "config.json", "access path")
 
-func loadConfig() (*config.Config, error){
+func loadConfig() (*config.Config, error) {
 	flag.Parse()
 	log.SetFlags(0)
 

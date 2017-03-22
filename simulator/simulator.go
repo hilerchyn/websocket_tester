@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/url"
 
-	"chat_tester/config"
+	"github.com/hilerchyn/websocket_tester/config"
 	"os"
 	"sync"
 )

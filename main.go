@@ -10,9 +10,8 @@ import (
 	"log"
 	"os"
 
-	"chat_tester/simulator"
+	"github.com/hilerchyn/websocket_tester/simulator"
 )
-
 
 func main() {
 
