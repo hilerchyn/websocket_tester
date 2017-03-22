@@ -24,7 +24,6 @@ func (s *Simulator) connect(workerId int, waitChan chan int) {
 	//	for {
 	c, _, err := websocket.DefaultDialer.Dial(s.Url.String(), nil)
 	if err != nil {
-		s.wg.Done()
 		log.Println("dial:", err)
 		return
 	}
