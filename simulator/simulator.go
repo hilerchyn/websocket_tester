@@ -38,10 +38,13 @@ func (s *Simulator) Run() {
 
 	s.TotalConn = 0
 
+	waitChan := make(chan int, s.Count)
+
 	// start worker
 	for count := 0; count < s.Count; count++ {
 		s.wg.Add(1)
-		go s.connect(count)
+		go s.connect(count, waitChan)
+		<-waitChan
 	}
 
 	s.wg.Wait()
