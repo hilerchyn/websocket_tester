@@ -61,10 +61,11 @@ func (s *Simulator) connect(workerId int) {
 				err := c.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf(s.defaultConfig.StrLogin, rand.Int())))
 				lock.Unlock()
 				if err != nil {
+					s.worker[workerId] <- workerId
 					log.Println("write:", err)
 					return
 				}
-
+				s.TotalConn++
 				loginFlag = true
 			}
 		default:
@@ -84,6 +85,7 @@ func (s *Simulator) sync(workerId int, conn *websocket.Conn) {
 		select {
 		case done := <-s.worker[workerId]:
 			log.Println("Worker:", done, " Done!")
+			close(s.worker[workerId])
 			return
 		default:
 			if conn == nil {
@@ -94,11 +96,11 @@ func (s *Simulator) sync(workerId int, conn *websocket.Conn) {
 			_, message, err := conn.ReadMessage()
 			lock.Unlock()
 			if err != nil {
-				log.Println("read:", err)
+				log.Println("read[", workerId, "]:", err)
 				return
 			}
 			log.Print(time.Now().String())
-			log.Printf("recv: %s", message)
+			log.Printf("recv[%d]: %s", workerId, message)
 
 			// pong
 			if strings.Compare(string(message), s.defaultConfig.StrPing) == 0 {
