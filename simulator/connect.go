@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/websocket"
 	"math/rand"
 	"strings"
-//	"sync"
+	//	"sync"
 )
 
 func init() {
@@ -16,6 +16,8 @@ func init() {
 }
 
 func (s *Simulator) connect(workerId int, waitChan chan int) {
+
+	defer s.wg.Done()
 
 	log.Printf("worker %d connecting to %s", workerId, s.Url.String())
 	//c := func() *websocket.Conn {
@@ -46,8 +48,7 @@ func (s *Simulator) connect(workerId int, waitChan chan int) {
 	s.TotalConn++
 
 	// read message
-	go s.sync(workerId, c)
-
+	//go s.sync(workerId, c)
 
 	//loginFlag := false
 	//tickerLogin := time.NewTicker(time.Second + time.Duration(rand.Intn(s.defaultConfig.SimulatorStartIn)+1))
@@ -59,7 +60,7 @@ func (s *Simulator) connect(workerId int, waitChan chan int) {
 		select {
 		case <-ticker.C:
 			//log.Println(t.String())
-			s.worker[workerId] <- workerId
+			//s.worker[workerId] <- workerId
 			return
 			/*		case <-tickerLogin.C:
 					if loginFlag == false {
@@ -81,6 +82,24 @@ func (s *Simulator) connect(workerId int, waitChan chan int) {
 			*/
 		default:
 
+			_, message, err := c.ReadMessage()
+			if err != nil {
+				log.Println("read[", workerId, "]:", err)
+				return
+			}
+			//log.Print(time.Now().String())
+			log.Printf("recv[%d]: %s", workerId, message)
+
+			// pong
+			if strings.Compare(string(message), s.defaultConfig.StrPing) == 0 {
+				//lock.Lock()
+				err := c.WriteMessage(websocket.TextMessage, []byte(s.defaultConfig.StrPong))
+				//lock.Unlock()
+				if err != nil {
+					log.Println("write:", err)
+					return
+				}
+			}
 		}
 	}
 
