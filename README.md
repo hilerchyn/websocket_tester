@@ -12,6 +12,13 @@ for support more connections, need to change system parameters
 * echo '* hard nofile 1048576' >> /etc/security/limits.conf #用户单进程的最大文件数，用户登录时生效
 * ulimit -n 1048576 #用户单进程的最大文件数 当前会话生效
 
+# Build
+
+```shell
+  cd $GOPATH/src/github.com/hilerchyn/websocket_tester
+  go build ./*.go
+```
+
 # Usage 
 
 ```shell
