@@ -25,6 +25,7 @@ func (s *Simulator) connect(workerId int, waitChan chan int) {
 	c, _, err := websocket.DefaultDialer.Dial(s.Url.String(), nil)
 	if err != nil {
 		log.Println("dial:", err)
+		waitChan <- workerId
 		return
 	}
 
@@ -87,7 +88,6 @@ func (s *Simulator) connect(workerId int, waitChan chan int) {
 				return
 			}
 			//log.Print(time.Now().String())
-			log.Printf("recv[%d]: %s", workerId, message)
 
 			// pong
 			if strings.Compare(string(message), s.defaultConfig.StrPing) == 0 {
@@ -98,6 +98,8 @@ func (s *Simulator) connect(workerId int, waitChan chan int) {
 					log.Println("write:", err)
 					return
 				}
+			} else {
+				log.Printf("recv[%d]: %s", workerId, message)
 			}
 		}
 	}
