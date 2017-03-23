@@ -18,6 +18,7 @@ type Config struct {
 	SimulatorCount   int    `json:"simulator_count"`
 	SimulatorStartIn int    `json:"simulator_start_in"`
 	ExecSecond       int    `json:"exec_second"`
+	WorkerCount      int    `json:"worker_count"`
 }
 
 func NewConfig(configFile string) (*Config, error) {

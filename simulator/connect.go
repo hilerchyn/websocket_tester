@@ -19,13 +19,15 @@ func (s *Simulator) connect(workerId int, waitChan chan int) {
 
 	defer s.wg.Done()
 
+	
+
 	log.Printf("worker %d connecting to %s", workerId, s.Url.String())
 	//c := func() *websocket.Conn {
 	//	for {
 	c, _, err := websocket.DefaultDialer.Dial(s.Url.String(), nil)
 	if err != nil {
 		log.Println("dial:", err)
-		waitChan <- workerId
+		<-waitChan
 		return
 	}
 
@@ -33,8 +35,8 @@ func (s *Simulator) connect(workerId int, waitChan chan int) {
 	//	}
 	//}()
 	defer c.Close()
-
-	waitChan <- workerId
+	<-waitChan
+	
 
 	// set chan value
 	s.worker[workerId] = make(chan int)

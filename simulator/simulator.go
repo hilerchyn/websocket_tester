@@ -20,6 +20,7 @@ type Simulator struct {
 
 func NewSimulator(defaultConfig *config.Config) (*Simulator, error) {
 
+	// validate parameters
 	if defaultConfig.SimulatorStartIn >= defaultConfig.ExecSecond {
 		log.Println("simulator_start_in should greater than exec_second")
 		os.Exit(1)
@@ -36,18 +37,22 @@ func (s *Simulator) Run() {
 	// init worker map
 	s.worker = make(map[int]chan int)
 
+	// statistic how many connections success
 	s.TotalConn = 0
 
-	waitChan := make(chan int, s.Count)
+	// set how many workers to start the connection at the same time
+	waitChan := make(chan int, s.defaultConfig.WorkerCount)
 
 	// start worker
 	for count := 0; count < s.Count; count++ {
 		s.wg.Add(1)
+		waitChan <-count
 		go s.connect(count, waitChan)
-		<-waitChan
 	}
 
+	// waitting for all connections end
 	s.wg.Wait()
 
+	// out put how many connections started
 	log.Println("TotalConnections:", s.TotalConn)
 }
