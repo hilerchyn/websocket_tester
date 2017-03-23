@@ -35,20 +35,21 @@ func (s *Simulator) connect(workerId int, waitChan chan int) {
 	//	}
 	//}()
 	defer c.Close()
-	<-waitChan
 	
 
 	// set chan value
-	s.worker[workerId] = make(chan int)
+	//s.worker[workerId] = make(chan int)
 
 	err = c.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf(s.defaultConfig.StrLogin, rand.Int())))
 	if err != nil {
-		s.worker[workerId] <- workerId
+		//s.worker[workerId] <- workerId
+		<-waitChan
 		log.Println("write:", err)
 		return
 	}
 	s.TotalConn++
-
+	
+	
 	// read message
 	//go s.sync(workerId, c)
 
@@ -90,7 +91,7 @@ func (s *Simulator) connect(workerId int, waitChan chan int) {
 				return
 			}
 			//log.Print(time.Now().String())
-
+			<-waitChan
 			// pong
 			if strings.Compare(string(message), s.defaultConfig.StrPing) == 0 {
 				//lock.Lock()
