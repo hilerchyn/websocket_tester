@@ -41,7 +41,8 @@ JSON format
   "str_pong":"{\"type\":\"pong\"}",
   "simulator_count":2,
   "simulator_start_in":5,
-  "exec_second": 12
+  "exec_second":12,
+  "worker_count":5
 }
 ```
 
@@ -58,6 +59,7 @@ parameter | description
 **simulator_count** | start how many client to connect to server
 **simulator_start_in** | start all client in how many time(second)
 **exec_second** | how long to run
+**worker_count** | how many workers to start connections at the same time
 
 
 # TODO List
