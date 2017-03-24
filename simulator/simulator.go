@@ -14,7 +14,7 @@ type Simulator struct {
 	Url           url.URL
 	Count         int
 	wg            sync.WaitGroup
-	worker        map[int]chan int
+	//worker        map[int]chan int
 	TotalConn     int
 }
 
@@ -35,7 +35,7 @@ func NewSimulator(defaultConfig *config.Config) (*Simulator, error) {
 func (s *Simulator) Run() {
 
 	// init worker map
-	s.worker = make(map[int]chan int)
+	//s.worker = make(map[int]chan int)
 
 	// statistic how many connections success
 	s.TotalConn = 0

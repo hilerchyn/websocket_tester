@@ -7,8 +7,8 @@
     "str_say":"{\"type\":\"say\",\"parameters\":{\"body\":\"hold session ${USER_ID}\",\"title_id\":\"10\",\"user_id\":\"${USER_ID}\",\"nick_name\":\"u${USER_ID}\",\"event_id\":\"1\",\"group_id\":\"1\",\"type\":\"1\",\"icon\":\"icon.png\"},\"to_client_id\":\"1\",\"content\":\"hold session  ${USER_ID}\"}",
     "str_ping":"{\"type\":\"ping\"}",
     "str_pong":"{\"type\":\"pong\"}",
-    "simulator_count":240,
+    "simulator_count":200,
     "simulator_start_in":5,
-    "exec_second": 180,
+    "exec_second": 40,
     "worker_count": 5
 }
