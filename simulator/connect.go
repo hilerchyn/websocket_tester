@@ -31,7 +31,9 @@ func (s *Simulator) connect(workerId int, waitChan chan int) {
 	defer c.Close()
 	
 
-	err = c.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf(s.defaultConfig.StrLogin, rand.Int())))
+	// generate user ID
+	userID := rand.Int()
+	err = c.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf(s.defaultConfig.StrLogin, userID, userID)))
 	if err != nil {
 		// release one wait chan
 		<-waitChan
@@ -42,13 +44,29 @@ func (s *Simulator) connect(workerId int, waitChan chan int) {
 
 	// release one wait chan
 	<-waitChan
-	
+
+	var sayTicker *time.Ticker
+	var sayString string
+	if s.defaultConfig.SayInterval == 0 {
+		sayTicker = time.NewTicker(time.Duration(s.defaultConfig.ExecSecond+10) * time.Second)
+	} else {
+
+		sayString = fmt.Sprintf(s.defaultConfig.StrSay, userID)
+		sayTicker = time.NewTicker(time.Duration(s.defaultConfig.SayInterval + rand.Intn(s.defaultConfig.SayInterval)) * time.Second)
+	}
+
 	ticker := time.NewTicker(time.Duration(s.defaultConfig.ExecSecond) * time.Second)
 	defer ticker.Stop()
 	for {
 		select {
 		case <-ticker.C:
 			return
+		case <-sayTicker.C:
+			err := c.WriteMessage(websocket.TextMessage, []byte(sayString))
+			if err != nil {
+				log.Println("write:", err)
+				return
+			}
 		default:
 
 			_, message, err := c.ReadMessage()
@@ -65,7 +83,9 @@ func (s *Simulator) connect(workerId int, waitChan chan int) {
 					return
 				}
 			} else {
-				log.Printf("recv[%d]: %s", workerId, message)
+				if s.defaultConfig.OutputRecv {
+					log.Printf("recv[%d]: %s", workerId, message)
+				}
 			}
 		}
 	}
