@@ -51,7 +51,7 @@ func (s *Simulator) connect(workerId int, waitChan chan int) {
 		sayTicker = time.NewTicker(time.Duration(s.defaultConfig.ExecSecond+10) * time.Second)
 	} else {
 
-		sayString = fmt.Sprintf(s.defaultConfig.StrSay, userID)
+		sayString = fmt.Sprintf(s.defaultConfig.StrSay, userID, userID)
 		sayTicker = time.NewTicker(time.Duration(s.defaultConfig.SayInterval + rand.Intn(s.defaultConfig.SayInterval)) * time.Second)
 	}
 

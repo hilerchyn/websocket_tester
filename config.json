@@ -4,7 +4,7 @@
     "ws_port": "7272",
     "ws_path": "/",
     "str_login":"{\"type\":\"login\",\"user_id\":\"%d\",\"event_id\":\"1\",\"group_id\":\"1\",\"client_name\":\"U_%d\",\"room_id\":\"1\"}",
-    "str_say":"{\"type\":\"say\",\"parameters\":{\"body\":\"from tester user id %d\",\"group_id\":\"1\",\"nick_name\":\"FBred\",\"title_id\":\"10\",\"type\":1},\"content\":{\"body\":\"from websocket tester\",\"group_id\":\"1\",\"nick_name\":\"FBred\",\"title_id\":\"10\",\"type\":1},\"to_client_id\":\"all\",\"to_client_name\":\"everyone\"}",
+    "str_say":"{\"type\":\"say\",\"parameters\":{\"body\":\"from tester user id %d\",\"group_id\":\"1\",\"nick_name\":\"U_%d\",\"title_id\":\"10\",\"type\":1},\"content\":{\"body\":\"from websocket tester\",\"group_id\":\"1\",\"nick_name\":\"FBred\",\"title_id\":\"10\",\"type\":1},\"to_client_id\":\"all\",\"to_client_name\":\"everyone\"}",
     "str_ping":"{\"type\":\"ping\"}",
     "str_pong":"{\"type\":\"pong\"}",
     "simulator_count":250,
