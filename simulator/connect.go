@@ -29,7 +29,6 @@ func (s *Simulator) connect(workerId int, waitChan chan int) {
 		return
 	}
 	defer c.Close()
-	
 
 	// generate user ID
 	userID := rand.Int()
@@ -56,27 +55,18 @@ func (s *Simulator) connect(workerId int, waitChan chan int) {
 		fmt.Println("Say String Length:", len(sayString))
 		sayTicker = time.NewTicker(time.Duration(s.defaultConfig.SayInterval) * time.Second)
 	}
+	defer sayTicker.Stop()
 
-	ticker := time.NewTicker(time.Duration(s.defaultConfig.ExecSecond) * time.Second)
-	defer ticker.Stop()
-	for {
-		select {
-		case <-ticker.C:
-			return
-		case <-sayTicker.C:
-			err := c.WriteMessage(websocket.TextMessage, []byte(sayString))
-			if err != nil {
-				log.Println("write:", err)
-				return
-			}
-		default:
-
+	// read message
+	done := make(chan struct{}) //mark if the read finished
+	go func() {
+		defer close(done)
+		for {
 			_, message, err := c.ReadMessage()
 			if err != nil {
 				log.Println("read[", workerId, "]:", err)
 				return
 			}
-
 
 			if strings.Compare(string(message), s.defaultConfig.StrPing) == 0 {
 				err := c.WriteMessage(websocket.TextMessage, []byte(s.defaultConfig.StrPong))
@@ -89,6 +79,24 @@ func (s *Simulator) connect(workerId int, waitChan chan int) {
 					log.Printf("recv[%d]: %s", workerId, message)
 				}
 			}
+		}
+	}()
+
+	// say action, and wait for the Read process
+	ticker := time.NewTicker(time.Duration(s.defaultConfig.ExecSecond) * time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			return
+		case <-sayTicker.C:
+			err := c.WriteMessage(websocket.TextMessage, []byte(sayString))
+			if err != nil {
+				log.Println("write:", err)
+				return
+			}
+		case <-done:
+			return
 		}
 	}
 
